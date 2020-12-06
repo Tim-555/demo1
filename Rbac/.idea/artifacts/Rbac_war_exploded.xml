@@ -1,0 +1,21 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" name="Rbac:war exploded">
+    <output-path>$PROJECT_DIR$/out/artifacts/Rbac_war_exploded</output-path>
+    <root id="root">
+      <element id="javaee-facet-resources" facet="Rbac/web/Web" />
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="Rbac" />
+        </element>
+        <element id="directory" name="lib">
+          <element id="library" level="project" name="Spring-5.2.3.RELEASE" />
+          <element id="library" level="project" name="Spring MVC-5.2.3.RELEASE" />
+          <element id="library" level="project" name="druid-1.0.26" />
+          <element id="library" level="project" name="standard-1.2.5" />
+          <element id="library" level="project" name="lombok" />
+          <element id="library" level="project" name="aspectjweaver-1.8.7" />
+        </element>
+      </element>
+    </root>
+  </artifact>
+</component>

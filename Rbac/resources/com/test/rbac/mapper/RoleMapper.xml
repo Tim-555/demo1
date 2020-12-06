@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.test.rbac.mapper.RoleMapper">
+    <resultMap id="BaseMap" type="Role">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="sn" property="sn"/>
+        <collection property="permissions" ofType="Permission" column="id"
+    </resultMap>
+    <insert id="save" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+        INSERT INTO role (sn, name) VALUES (#{sn}, #{name})
+    </insert>
+
+    <delete id="delete">
+        DELETE FROM role
+        WHERE id = #{id}
+    </delete>
+
+    <update id="update">
+        UPDATE role
+        SET name = #{name}, sn = #{sn}
+    </update>
+
+    <select id="list" resultType="Role">
+        SELECT *
+        FROM role
+
+    </select>
+    <select id="queryForCount" resultType="java.lang.Integer">
+        SELECT count(id)
+        FROM role
+    </select>
+    <select id="queryForList" resultType="com.test.rbac.dao.Role">
+        SELECT *
+        FROM role
+        LIMIT #{startIndex}, #{pageSize}
+    </select>
+    <select id="get" resultType="com.test.rbac.dao.Role">
+        SELECT *
+        FROM role
+        WHERE id = #{id}
+    </select>
+
+
+</mapper>

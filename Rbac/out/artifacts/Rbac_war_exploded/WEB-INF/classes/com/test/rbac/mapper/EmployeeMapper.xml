@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.test.rbac.mapper.EmployeeMapper">
+    <!--这里dept是查单个-->
+    <resultMap id="baseSingleMap" type="Employee">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="email" property="email"/>
+        <result column="age" property="age"/>
+        <result column="admin" property="admin"/>
+        <!--发额外sql方式:建议查单个的-->
+        <association property="dept" column="dept_id" javaType="Department"
+                     select="com.test.rbac.mapper.DepartmentMapper.get"/>
+    </resultMap>
+
+    <!--内联方式:建议查多个的-->
+    <resultMap id="baseListMap" type="Employee">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="email" property="email"/>
+        <result column="age" property="age"/>
+        <result column="admin" property="admin"/>
+
+        <association property="dept" javaType="Department">
+            <id column="d_id" property="id"/>
+            <result column="d_name" property="name"/>
+            <result column="d_sn" property="sn"/>
+        </association>
+    </resultMap>
+
+    <!--role是查多个,建议用内联方式-->
+
+
+    <insert id="save" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+        INSERT INTO employee (name, password, email, age, admin, dept_id)
+        VALUES (#{name}, #{password}, #{email}, #{age}, #{admin}, #{dept.id})
+    </insert>
+    <delete id="delete">
+        DELETE FROM employee
+        WHERE id = #{id}
+    </delete>
+
+    <update id="update">
+        UPDATE employee set name=#{name},
+        <if test="password !=null and password !=''">
+            password =#{password},
+        </if>
+        email=#{email},age=#{age},admin=#{admin},dept_id=#{dept.id}
+        where id= #{id}
+    </update>
+    <!--查单个-->
+    <select id="get" resultMap="baseSingleMap">
+        SELECT
+            id,
+            name,
+            password,
+            email,
+            age,
+            admin,
+            dept_id
+        FROM employee
+        WHERE id = #{id}
+    </select>
+    <!--查多个-->
+    <select id="list" resultMap="baseListMap">
+        SELECT
+            e.id,
+            e.name,
+            e.password,
+            e.email,
+            e.age,
+            e.admin,
+            d.id   d_id,
+            d.name d_name,
+            d.sn   d_sn
+
+        FROM employee e LEFT JOIN Department d ON e.dept_id = d.id;
+
+    </select>
+
+    <select id="queryForList" resultMap="baseListMap">
+        SELECT
+        e.id,
+        e.name,
+        e.password,
+        e.email,
+        e.age,
+        e.admin,
+        d.id d_id,
+        d.name d_name,
+        d.sn d_sn
+
+        FROM employee e LEFT JOIN Department d ON e.dept_id = d.id
+        <!--  <where>
+              <if test="keyword !=null and keyword !=''">
+                  and (e.name like concat('%',#{keyword},'%') or e.email like concat('%',#{keyword},'%'))
+              </if>
+              <if test="deptId !=null and deptId >0">
+                  and e.dept_id=#{deptId}
+              </if>
+
+          </where>-->
+
+        <where>
+            <if test="keyword !=null">
+                and (e.name like concat ('%',#{keyword},'%') or e.email
+                like concat ('%',#{keyword},'%'))
+            </if>
+            <if test="deptId >0">
+                and e.dept_id =#{deptId}
+
+            </if>
+        </where>
+        /*类的属性 startIndex ,pageSize
+        */
+        limit #{startIndex},#{pageSize}
+    </select>
+
+    <select id="queryForCount" resultType="java.lang.Integer">
+        SELECT count(e.id)
+        FROM employee e
+
+        <!--<where>-->
+        <!--<if test="keyword !=null and keyword !=''">-->
+        <!--and (e.name like concat ('%',#{keyword},'%') or e.email like concat ('%',#{keyword},'%'))-->
+        <!--</if>-->
+        <!--<if test="deptId !=null and deptId >0">-->
+        <!--and e.dept_id =#{deptId}-->
+        <!--</if>-->
+        <!--</where>-->
+
+        <where>
+            <if test="keyword !=null">
+                and (e.name like concat ('%',#{keyword},'%') or e.email
+                like concat ('%',#{keyword},'%'))
+            </if>
+            <if test="deptId >0">
+                and e.dept_id =#{deptId}
+
+            </if>
+        </where>
+
+
+    </select>
+
+
+</mapper>
